@@ -1,16 +1,28 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   font-family: 'Inter', sans-serif;
   background: #f9fafb;
   color: #111;
-  padding: 2rem;
-  max-width: 800px;
-  margin: auto;
+  margin: 0;
   line-height: 1.6;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
 }
 
 header {
   text-align: center;
-  margin-bottom: 2rem;
 }
 
 header .logo {
@@ -20,19 +32,36 @@ header .logo {
 
 header h1 {
   font-size: 1.75rem;
-  margin: 0.5rem 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 header p {
   font-size: 1rem;
   color: #555;
+  margin: 0.5rem 0 0;
 }
 
-input, button {
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+label {
+  font-weight: 600;
+}
+
+input,
+button {
   padding: 0.75rem;
   font-size: 1rem;
   width: 100%;
-  margin: 0.5rem 0;
+  margin: 0;
   border: 1px solid #ccc;
   border-radius: 0.5rem;
 }
@@ -63,11 +92,16 @@ pre {
   padding: 1rem;
   border-radius: 0.5rem;
   overflow-x: auto;
-  margin-top: 1rem;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+pre code {
+  display: block;
 }
 
 .footer {
-  margin-top: 2rem;
   font-size: 0.875rem;
   color: #666;
   text-align: center;
@@ -80,4 +114,40 @@ pre {
 
 .footer a:hover {
   text-decoration: underline;
+}
+
+.bibtex-output .bibtex-symbol {
+  color: #f472b6;
+}
+
+.bibtex-output .bibtex-type {
+  color: #a5b4fc;
+  font-weight: 600;
+}
+
+.bibtex-output .bibtex-key {
+  color: #facc15;
+}
+
+.bibtex-output .bibtex-field {
+  color: #60a5fa;
+}
+
+.bibtex-output .bibtex-value {
+  color: #34d399;
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 1.25rem;
+    gap: 1.25rem;
+  }
+
+  header h1 {
+    font-size: 1.5rem;
+  }
+
+  header .logo {
+    width: 42px;
+  }
 }

@@ -1,12 +1,13 @@
+const output = document.getElementById('output');
+
 async function generateCitation() {
   const input = document.getElementById('repoUrl').value.trim();
-  const output = document.getElementById('output');
-  output.textContent = 'Processing...';
+  setOutputMessage('Processing...');
 
   // Validate the GitHub URL
   const match = input.match(/github\.com\/([^/]+)\/([^/]+)/);
   if (!match) {
-    output.textContent = 'Invalid GitHub URL format.';
+    setOutputMessage('Invalid GitHub URL format.');
     return;
   }
 
@@ -19,7 +20,7 @@ async function generateCitation() {
     const bibResponse = await fetch(bibUrl);
     if (bibResponse.ok) {
       const bibText = await bibResponse.text();
-      output.textContent = bibText;
+      renderBibtex(bibText);
       return;
     }
   } catch (err) {
@@ -34,7 +35,7 @@ async function generateCitation() {
       const yamlModule = await import('https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/+esm');
       const data = yamlModule.load(yamlText);
       const bibtex = generateBibtexFromCFF(data);
-      output.textContent = bibtex;
+      renderBibtex(bibtex);
       return;
     }
   } catch (err) {
@@ -60,10 +61,10 @@ async function generateCitation() {
   url = {${repoJson.html_url}},
   note = {Accessed ${new Date().toISOString().split('T')[0]}}
 }`;
-    output.textContent = bibtex;
+    renderBibtex(bibtex);
   } catch (err) {
     console.error('Fallback GitHub fetch failed:', err);
-    output.textContent = 'Failed to generate BibTeX citation. Please check the repository URL and try again.';
+    setOutputMessage('Failed to generate BibTeX citation. Please check the repository URL and try again.');
   }
 }
 
@@ -91,6 +92,57 @@ function generateBibtexFromCFF(data) {
 function formatNameToBibtex(name) {
   const [firstName, ...lastName] = name.split(' ');
   return `${lastName.join(' ')}, ${firstName}`;
+}
+
+function setOutputMessage(message) {
+  output.textContent = message;
+}
+
+function renderBibtex(bibtex) {
+  output.innerHTML = highlightBibtex(bibtex);
+}
+
+function highlightBibtex(bibtex) {
+  return bibtex
+    .split('\n')
+    .map((line) => {
+      const escaped = escapeHtml(line);
+      let result = escaped;
+
+      result = result.replace(
+        /(\=\s*)(\{[^}]*\}|"[^"]*"|\d{4}|\d+(\.\d+)?)/,
+        (match, eq, value) => `${eq}<span class="bibtex-value">${value}</span>`
+      );
+
+      result = result.replace(
+        /^(\s*)([A-Za-z][A-Za-z0-9_-]*)(\s*=\s*)/,
+        (match, space, field, eq) => `${space}<span class="bibtex-field">${field}</span>${eq}`
+      );
+
+      result = result.replace(
+        /^(@)([A-Za-z]+)(\s*[{(]\s*)([^,\s]+)?/,
+        (match, atSymbol, type, brace, key) => {
+          const keyMarkup = key ? `<span class="bibtex-key">${key}</span>` : '';
+          return `<span class="bibtex-symbol">${atSymbol}</span><span class="bibtex-type">${type}</span>${brace}${keyMarkup}`;
+        }
+      );
+
+      return result;
+    })
+    .join('\n');
+}
+
+function escapeHtml(text) {
+  return text.replace(/[&<>"']/g, (char) => {
+    const map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    };
+    return map[char];
+  });
 }
 
 // Attach event listener to the button
