@@ -1,12 +1,20 @@
+const output = document.getElementById('output');
+const htmlEscapeMap = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;'
+};
+
 async function generateCitation() {
   const input = document.getElementById('repoUrl').value.trim();
-  const output = document.getElementById('output');
-  output.textContent = 'Processing...';
+  setOutputMessage('Processing...');
 
   // Validate the GitHub URL
   const match = input.match(/github\.com\/([^/]+)\/([^/]+)/);
   if (!match) {
-    output.textContent = 'Invalid GitHub URL format.';
+    setOutputMessage('Invalid GitHub URL format.');
     return;
   }
 
@@ -19,7 +27,7 @@ async function generateCitation() {
     const bibResponse = await fetch(bibUrl);
     if (bibResponse.ok) {
       const bibText = await bibResponse.text();
-      output.textContent = bibText;
+      renderBibtex(bibText);
       return;
     }
   } catch (err) {
@@ -34,7 +42,7 @@ async function generateCitation() {
       const yamlModule = await import('https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/+esm');
       const data = yamlModule.load(yamlText);
       const bibtex = generateBibtexFromCFF(data);
-      output.textContent = bibtex;
+      renderBibtex(bibtex);
       return;
     }
   } catch (err) {
@@ -60,10 +68,10 @@ async function generateCitation() {
   url = {${repoJson.html_url}},
   note = {Accessed ${new Date().toISOString().split('T')[0]}}
 }`;
-    output.textContent = bibtex;
+    renderBibtex(bibtex);
   } catch (err) {
     console.error('Fallback GitHub fetch failed:', err);
-    output.textContent = 'Failed to generate BibTeX citation. Please check the repository URL and try again.';
+    setOutputMessage('Failed to generate BibTeX citation. Please check the repository URL and try again.');
   }
 }
 
@@ -91,6 +99,59 @@ function generateBibtexFromCFF(data) {
 function formatNameToBibtex(name) {
   const [firstName, ...lastName] = name.split(' ');
   return `${lastName.join(' ')}, ${firstName}`;
+}
+
+function setOutputMessage(message) {
+  output.textContent = message;
+}
+
+function renderBibtex(bibtex) {
+  output.innerHTML = highlightBibtex(bibtex);
+}
+
+function highlightBibtex(bibtex) {
+  return bibtex
+    .split('\n')
+    .map((line) => highlightBibtexLine(line))
+    .join('\n');
+}
+
+function highlightBibtexLine(line) {
+  const entryMatch = line.match(/^(@)([A-Za-z]+)(\s*[{(]\s*)([^,\s]+)?/);
+  if (entryMatch) {
+    const [fullMatch, atSymbol, type, brace, key] = entryMatch;
+    const keyMarkup = key ? `<span class="bibtex-key">${escapeHtml(key)}</span>` : '';
+    const prefix = `<span class="bibtex-symbol">${escapeHtml(atSymbol)}</span><span class="bibtex-type">${escapeHtml(type)}</span>${escapeHtml(brace)}${keyMarkup}`;
+    return `${prefix}${escapeHtml(line.slice(fullMatch.length))}`;
+  }
+
+  const fieldMatch = line.match(/^(\s*)([A-Za-z][A-Za-z0-9_-]*)(\s*=\s*)(.*)$/);
+  if (fieldMatch) {
+    const [, space, field, eq, rest] = fieldMatch;
+    return `${escapeHtml(space)}<span class="bibtex-field">${escapeHtml(field)}</span>${escapeHtml(eq)}${highlightBibtexValues(rest)}`;
+  }
+
+  return escapeHtml(line);
+}
+
+function highlightBibtexValues(text) {
+  const valueRegex = /(\{[^}]*\}|"[^"]*"|\d{4}|\d+(\.\d+)?)/g;
+  let result = '';
+  let lastIndex = 0;
+  let match;
+
+  while ((match = valueRegex.exec(text)) !== null) {
+    result += escapeHtml(text.slice(lastIndex, match.index));
+    result += `<span class="bibtex-value">${escapeHtml(match[0])}</span>`;
+    lastIndex = match.index + match[0].length;
+  }
+
+  result += escapeHtml(text.slice(lastIndex));
+  return result;
+}
+
+function escapeHtml(text) {
+  return text.replace(/[&<>"']/g, (char) => htmlEscapeMap[char]);
 }
 
 // Attach event listener to the button

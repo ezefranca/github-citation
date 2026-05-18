@@ -12,21 +12,30 @@
   <link rel="stylesheet" href="styles/style.css">
 </head>
 <body>
-  <header>
-    <h1><img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo" class="logo"> GitHub to BibTeX Citation Generator</h1>
-    <p>Generate BibTeX citations from any GitHub repository with support for <a href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-citation-files" target="_blank" rel="noopener noreferrer">CITATION</a> and GitHub metadata.</p>
-  </header>
-  <main>
-    <label for="repoUrl">Enter GitHub Repository URL:</label>
-    <input type="text" id="repoUrl" placeholder="e.g. https://github.com/userName/repoName" />
-    <button id="generateButton"><i class="fas fa-magic"></i> Generate BibTeX</button>
-    <div class="output-container">
-      <pre><code id="output" class="language-bibtex">BibTeX citation will appear here...</code></pre>
-    </div>
-  </main>
-  <footer class="footer">
-    <p>Works only with public GitHub repositories | Uses <a href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-citation-files" target="_blank" rel="noopener noreferrer">CITATION.cff</a> if available.</p>
-  </footer>
+  <div class="page">
+    <header>
+      <h1>
+        <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo" class="logo">
+        GitHub to BibTeX Citation Generator
+      </h1>
+      <p>Generate BibTeX citations from any GitHub repository with support for <a href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-citation-files" target="_blank" rel="noopener noreferrer">CITATION</a> and GitHub metadata.</p>
+    </header>
+    <main>
+      <label for="repoUrl">Enter GitHub Repository URL:</label>
+      <input type="text" id="repoUrl" placeholder="e.g. https://github.com/userName/repoName" />
+      <button id="generateButton"><i class="fas fa-magic"></i> Generate BibTeX</button>
+      <div class="output-container">
+        <pre><code id="output" class="language-bibtex bibtex-output">BibTeX citation will appear here...</code></pre>
+      </div>
+    </main>
+    <footer class="footer">
+      <p>
+        Works only with public GitHub repositories | Uses
+        <a href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-citation-files" target="_blank" rel="noopener noreferrer">CITATION.cff</a>
+        if available | <a href="https://github.com/ezefranca/github-citation" target="_blank" rel="noopener noreferrer">GitHub Repo</a>
+      </p>
+    </footer>
+  </div>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <script src="scripts/app.js"></script>
 </body>
