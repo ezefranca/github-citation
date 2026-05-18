@@ -1,4 +1,11 @@
 const output = document.getElementById('output');
+const htmlEscapeMap = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;'
+};
 
 async function generateCitation() {
   const input = document.getElementById('repoUrl').value.trim();
@@ -110,7 +117,7 @@ function highlightBibtex(bibtex) {
       let result = escaped;
 
       result = result.replace(
-        /(\=\s*)(\{[^}]*\}|"[^"]*"|\d{4}|\d+(\.\d+)?)/,
+        /(\=\s*)(\{[^}]*\}|"[^"]*"|\d{4}|\d+(\.\d+)?)/g,
         (match, eq, value) => `${eq}<span class="bibtex-value">${value}</span>`
       );
 
@@ -133,16 +140,7 @@ function highlightBibtex(bibtex) {
 }
 
 function escapeHtml(text) {
-  return text.replace(/[&<>"']/g, (char) => {
-    const map = {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#39;'
-    };
-    return map[char];
-  });
+  return text.replace(/[&<>"']/g, (char) => htmlEscapeMap[char]);
 }
 
 // Attach event listener to the button
