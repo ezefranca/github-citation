@@ -112,31 +112,42 @@ function renderBibtex(bibtex) {
 function highlightBibtex(bibtex) {
   return bibtex
     .split('\n')
-    .map((line) => {
-      const escaped = escapeHtml(line);
-      let result = escaped;
-
-      result = result.replace(
-        /(\=\s*)(\{[^}]*\}|"[^"]*"|\d{4}|\d+(\.\d+)?)/g,
-        (match, eq, value) => `${eq}<span class="bibtex-value">${value}</span>`
-      );
-
-      result = result.replace(
-        /^(\s*)([A-Za-z][A-Za-z0-9_-]*)(\s*=\s*)/,
-        (match, space, field, eq) => `${space}<span class="bibtex-field">${field}</span>${eq}`
-      );
-
-      result = result.replace(
-        /^(@)([A-Za-z]+)(\s*[{(]\s*)([^,\s]+)?/,
-        (match, atSymbol, type, brace, key) => {
-          const keyMarkup = key ? `<span class="bibtex-key">${key}</span>` : '';
-          return `<span class="bibtex-symbol">${atSymbol}</span><span class="bibtex-type">${type}</span>${brace}${keyMarkup}`;
-        }
-      );
-
-      return result;
-    })
+    .map((line) => highlightBibtexLine(line))
     .join('\n');
+}
+
+function highlightBibtexLine(line) {
+  const entryMatch = line.match(/^(@)([A-Za-z]+)(\s*[{(]\s*)([^,\s]+)?/);
+  if (entryMatch) {
+    const [fullMatch, atSymbol, type, brace, key] = entryMatch;
+    const keyMarkup = key ? `<span class="bibtex-key">${escapeHtml(key)}</span>` : '';
+    const prefix = `<span class="bibtex-symbol">${escapeHtml(atSymbol)}</span><span class="bibtex-type">${escapeHtml(type)}</span>${escapeHtml(brace)}${keyMarkup}`;
+    return `${prefix}${escapeHtml(line.slice(fullMatch.length))}`;
+  }
+
+  const fieldMatch = line.match(/^(\s*)([A-Za-z][A-Za-z0-9_-]*)(\s*=\s*)(.*)$/);
+  if (fieldMatch) {
+    const [, space, field, eq, rest] = fieldMatch;
+    return `${escapeHtml(space)}<span class="bibtex-field">${escapeHtml(field)}</span>${escapeHtml(eq)}${highlightBibtexValues(rest)}`;
+  }
+
+  return escapeHtml(line);
+}
+
+function highlightBibtexValues(text) {
+  const valueRegex = /(\{[^}]*\}|"[^"]*"|\d{4}|\d+(\.\d+)?)/g;
+  let result = '';
+  let lastIndex = 0;
+  let match;
+
+  while ((match = valueRegex.exec(text)) !== null) {
+    result += escapeHtml(text.slice(lastIndex, match.index));
+    result += `<span class="bibtex-value">${escapeHtml(match[0])}</span>`;
+    lastIndex = match.index + match[0].length;
+  }
+
+  result += escapeHtml(text.slice(lastIndex));
+  return result;
 }
 
 function escapeHtml(text) {
