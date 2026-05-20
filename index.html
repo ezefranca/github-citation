@@ -3,40 +3,229 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GitHub to BibTeX Citation Generator</title>
-  <meta name="description" content="Generate BibTeX citations from any GitHub repository with support for CITATION.cff and GitHub metadata." />
-  <meta name="keywords" content="GitHub, BibTeX, Citation Generator, CITATION.cff, Academic Citations" />
+  <title>GitHub Citation | Generate BibTeX for GitHub Repositories</title>
+  <meta name="description" content="Generate auditable BibTeX citations for public GitHub repositories using CITATION.bib, CITATION.cff, or explicit GitHub metadata fallbacks. Built for academic software citation workflows." />
+  <meta name="keywords" content="GitHub citation generator, BibTeX for GitHub repository, CITATION.cff to BibTeX, software citation, cite GitHub repository, academic BibTeX" />
   <meta name="author" content="Ezequiel Santos" />
+  <link rel="canonical" href="https://ezefranca.github.io/github-citation/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="GitHub Citation" />
+  <meta property="og:description" content="Generate BibTeX for GitHub repositories with clear provenance from CITATION.bib, CITATION.cff, or GitHub metadata." />
+  <meta property="og:url" content="https://ezefranca.github.io/github-citation/" />
+  <meta property="og:image" content="https://ezefranca.github.io/github-citation/img/app.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="GitHub Citation" />
+  <meta name="twitter:description" content="Generate reviewable BibTeX for public GitHub repositories and software citation workflows." />
+  <meta name="twitter:image" content="https://ezefranca.github.io/github-citation/img/app.png" />
   <link rel="icon" href="https://github.githubassets.com/favicons/favicon.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script>
+    (function () {
+      var storageKey = 'github-citation-theme';
+      var savedTheme = null;
+
+      try {
+        savedTheme = window.localStorage.getItem(storageKey);
+      } catch (error) {
+        savedTheme = null;
+      }
+
+      var systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      var theme = savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : systemTheme;
+      document.documentElement.dataset.theme = theme;
+    }());
+  </script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/dreampulse/computer-modern-web-font@master/fonts.css">
   <link rel="stylesheet" href="styles/style.css">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "GitHub Citation",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Web",
+      "url": "https://ezefranca.github.io/github-citation/",
+      "description": "Generate BibTeX citations for GitHub repositories using CITATION.bib, CITATION.cff, or GitHub metadata.",
+      "author": {
+        "@type": "Person",
+        "name": "Ezequiel Santos",
+        "url": "https://github.com/ezefranca"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How do I cite a GitHub repository in BibTeX?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Paste the public GitHub repository URL into GitHub Citation. The tool prefers CITATION.bib, converts CITATION.cff to BibTeX when needed, and otherwise drafts a BibTeX @misc entry from GitHub metadata."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens when a repository has no citation file?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "When no CITATION.bib or CITATION.cff file exists, the tool generates a reviewable fallback citation from repository metadata including repository name, owner profile name, creation year, repository URL, and access date."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does this support CITATION.cff to BibTeX conversion?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. The app parses CITATION.cff and maps citation metadata such as authors, title, DOI, version, year, and URL into a BibTeX entry."
+          }
+        }
+      ]
+    }
+  </script>
 </head>
 <body>
   <div class="page">
-    <header>
-      <h1>
-        <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo" class="logo">
-        GitHub to BibTeX Citation Generator
-      </h1>
-      <p>Generate BibTeX citations from any GitHub repository with support for <a href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-citation-files" target="_blank" rel="noopener noreferrer">CITATION</a> and GitHub metadata.</p>
+    <header class="topbar">
+      <div class="topbar-copy">
+        <p class="eyebrow">Academic Software Citation</p>
+        <h1>
+          <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo" class="logo">
+          GitHub Citation
+        </h1>
+        <p class="lede">Paste a GitHub repo URL or <code>owner/repo</code> and generate BibTeX.</p>
+      </div>
+      <div class="topbar-actions">
+        <button id="themeToggle" type="button" class="theme-toggle" aria-label="Toggle light and dark mode">
+          <svg viewBox="0 0 16 16" aria-hidden="true" class="theme-icon">
+            <path d="M9.598 1.591a.75.75 0 0 1 .785.175 6.5 6.5 0 1 0 3.85 5.85.75.75 0 0 1 1.26-.548A7.999 7.999 0 1 1 8.932.307a.75.75 0 0 1 .666 1.284Z"></path>
+          </svg>
+          <span id="themeToggleLabel">Dark</span>
+        </button>
+        <div class="repo-star-group">
+          <a
+            class="repo-star-button"
+            href="https://github.com/ezefranca/github-citation"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Star ezefranca/github-citation on GitHub"
+          >
+            <svg viewBox="0 0 16 16" aria-hidden="true" class="repo-star-icon">
+              <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .415 1.279l-3.046 2.97.72 4.193a.75.75 0 0 1-1.088.79L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.193L.82 6.374a.75.75 0 0 1 .415-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"></path>
+            </svg>
+            <span>Star</span>
+          </a>
+          <a
+            class="repo-star-count"
+            id="starCount"
+            href="https://github.com/ezefranca/github-citation/stargazers"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="View stargazers for ezefranca/github-citation"
+          >
+            ...
+          </a>
+        </div>
+      </div>
     </header>
-    <main>
-      <label for="repoUrl">Enter GitHub Repository URL:</label>
-      <input type="text" id="repoUrl" placeholder="e.g. https://github.com/userName/repoName" />
-      <button id="generateButton"><i class="fas fa-magic"></i> Generate BibTeX</button>
-      <div class="output-container">
-        <pre><code id="output" class="language-bibtex bibtex-output">BibTeX citation will appear here...</code></pre>
+
+    <main class="card workspace-card">
+      <form id="citationForm" class="citation-form">
+        <label for="repoUrl">GitHub repository</label>
+        <div class="input-row">
+          <input type="text" id="repoUrl" placeholder="owner/repo or https://github.com/owner/repo" />
+          <button id="generateButton" type="submit">Generate BibTeX</button>
+        </div>
+        <p class="input-hint">Supports full URLs, <code>github.com/owner/repo</code>, <code>owner/repo</code>, and <code>.git</code> URLs.</p>
+      </form>
+
+      <p id="outputMeta" class="output-meta">Ready for a repository URL.</p>
+
+      <section class="output-panel">
+        <div class="output-container">
+          <pre><code id="output" class="language-bibtex bibtex-output" aria-live="polite">BibTeX citation will appear here...</code></pre>
+        </div>
+      </section>
+
+      <div class="utility-bar">
+        <button id="copyButton" type="button" class="secondary-button" disabled>Copy BibTeX</button>
+        <div class="source-summary">
+          <span class="status-label">Source</span>
+          <strong id="citationSource" class="source-pill" data-tone="neutral">Awaiting input</strong>
+        </div>
+        <div class="toolbar-actions">
+          <button id="explainButton" type="button" class="ghost-button">How generated</button>
+          <button id="historyButton" type="button" class="ghost-button">History</button>
+          <button id="creditsButton" type="button" class="ghost-button">Credits</button>
+        </div>
       </div>
     </main>
+
     <footer class="footer">
-      <p>
-        Works only with public GitHub repositories | Uses
-        <a href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-citation-files" target="_blank" rel="noopener noreferrer">CITATION.cff</a>
-        if available | <a href="https://github.com/ezefranca/github-citation" target="_blank" rel="noopener noreferrer">GitHub Repo</a>
-      </p>
+      <p>Uses repository citation files first and falls back to GitHub metadata when needed.</p>
     </footer>
   </div>
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+  <dialog id="explainDialog" class="modal">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">How It Works</p>
+          <h2>How this citation was generated</h2>
+        </div>
+        <button type="button" class="ghost-button" data-close-dialog="explainDialog">Close</button>
+      </div>
+      <p id="citationExplanation">This workspace reports whether the result came from <code>CITATION.bib</code>, <code>CITATION.cff</code>, or an inferred GitHub metadata fallback.</p>
+      <ol class="method-list">
+        <li>Use <code>CITATION.bib</code> directly if the repository ships maintainer-authored BibTeX.</li>
+        <li>Convert <code>CITATION.cff</code> into BibTeX when a citation file exists but is not already in BibTeX format.</li>
+        <li>If neither file exists, generate a reviewable <code>@misc</code> entry from GitHub repository metadata.</li>
+      </ol>
+    </div>
+  </dialog>
+
+  <dialog id="historyDialog" class="modal">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Local History</p>
+          <h2>Recent citations</h2>
+        </div>
+        <div class="modal-actions">
+          <button id="clearHistoryButton" type="button" class="ghost-button">Clear</button>
+          <button type="button" class="ghost-button" data-close-dialog="historyDialog">Close</button>
+        </div>
+      </div>
+      <p class="modal-copy">Stored only in your browser with <code>localStorage</code>.</p>
+      <ul id="historyList" class="history-list" aria-live="polite">
+        <li class="empty-state">No saved citations yet.</li>
+      </ul>
+    </div>
+  </dialog>
+
+  <dialog id="creditsDialog" class="modal">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Credits</p>
+          <h2>Sources and attribution</h2>
+        </div>
+        <button type="button" class="ghost-button" data-close-dialog="creditsDialog">Close</button>
+      </div>
+      <ul class="credits-list">
+        <li>Repository metadata and raw file access provided by GitHub.</li>
+        <li><code>CITATION.cff</code> parsing powered by <a href="https://github.com/nodeca/js-yaml" target="_blank" rel="noopener noreferrer">js-yaml</a> and aligned with the <a href="https://citation-file-format.github.io/" target="_blank" rel="noopener noreferrer">Citation File Format</a>.</li>
+        <li>Built by <a href="https://github.com/ezefranca" target="_blank" rel="noopener noreferrer">Ezequiel Santos</a>.</li>
+      </ul>
+    </div>
+  </dialog>
+
   <script src="scripts/app.js"></script>
 </body>
 </html>
