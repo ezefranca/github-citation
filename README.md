@@ -1,6 +1,6 @@
 # GitHub to BibTeX Citation Generator
 
-![](/img/app.png)
+![](/app.png)
 
 A simple web-based tool to generate BibTeX citations from any GitHub repository. This app supports repositories with `CITATION.cff` files and falls back to GitHub metadata when the file is unavailable.
 
