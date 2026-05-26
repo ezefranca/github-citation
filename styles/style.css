@@ -316,6 +316,36 @@ button:disabled {
   margin-top: 0.9rem;
 }
 
+.citation-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 0.75rem;
+}
+
+.tab-button {
+  border: 1px solid var(--ui-3);
+  background: var(--bg);
+  color: var(--tx);
+  font-size: 0.92rem;
+  font-weight: 600;
+  padding: 0.45rem 0.85rem;
+}
+
+.tab-button:hover {
+  background: var(--bg-2);
+}
+
+.tab-button.is-active {
+  background: var(--button-bg);
+  color: var(--button-text);
+  border-color: var(--button-bg);
+}
+
+.tab-button.is-active:hover {
+  background: var(--button-bg);
+}
+
 pre {
   margin: 0;
   min-height: 300px;
@@ -378,6 +408,51 @@ pre {
 .footer {
   text-align: center;
   padding-top: 0.85rem;
+}
+
+.info-card {
+  margin-top: 1.3rem;
+  padding: 1.1rem;
+}
+
+.info-card h2,
+.info-card h3 {
+  font-family: 'Computer Modern Sans', 'Latin Modern Sans', sans-serif;
+  font-weight: 400;
+  margin: 0.65rem 0 0.35rem;
+}
+
+.info-card h2 {
+  font-size: 1.4rem;
+}
+
+.info-card h3 {
+  font-size: 1.15rem;
+}
+
+.style-list {
+  list-style: none;
+  margin: 0.85rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.style-list li {
+  position: relative;
+  padding-left: 1rem;
+}
+
+.style-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.7rem;
+  width: 0.32rem;
+  height: 0.32rem;
+  border-radius: 999px;
+  background: var(--bl);
 }
 
 .modal {
@@ -535,7 +610,8 @@ pre {
   .topbar,
   .input-row,
   .utility-bar,
-  .modal-header {
+  .modal-header,
+  .citation-tabs {
     flex-direction: column;
     align-items: stretch;
   }
@@ -555,6 +631,7 @@ pre {
   .repo-star-button,
   .repo-star-count,
   #copyButton,
+  .tab-button,
   .toolbar-actions button,
   .modal-actions button {
     width: 100%;
