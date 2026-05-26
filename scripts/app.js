@@ -348,11 +348,12 @@ async function buildCitationDataFromBibtex(bibtex, repository) {
   }
 
   const fields = parsedEntry.fields;
+  const urlValue = fields.url || fields.howpublished || repository.repoUrl;
   const baseCitationData = {
     title: fields.title,
     authors: parseBibtexAuthors(fields.author),
     year: fields.year,
-    url: fields.url || fields.howpublished,
+    url: urlValue,
     doi: fields.doi,
     version: fields.version,
     publisher: fields.publisher,
@@ -361,7 +362,7 @@ async function buildCitationDataFromBibtex(bibtex, repository) {
     repoUrl: repository.repoUrl
   };
 
-  if (!fields.title || !fields.author || !fields.year || !fields.url) {
+  if (!fields.title || !fields.author || !fields.year) {
     const metadata = await fetchRepositoryMetadata(repository);
     const metadataCitation = buildCitationDataFromMetadata(repository, metadata);
     return normalizeCitationData(mergeCitationData(baseCitationData, metadataCitation));
@@ -691,7 +692,7 @@ function parseBibtexAuthors(authorValue) {
   }
 
   return String(authorValue)
-    .split(/\s+and\s+/i)
+    .split(/\s+\band\b\s+/i)
     .map((author) => author.trim())
     .filter(Boolean);
 }
