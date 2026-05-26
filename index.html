@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GitHub Citation | Generate BibTeX for GitHub Repositories</title>
-  <meta name="description" content="Generate auditable BibTeX citations for public GitHub repositories using CITATION.bib, CITATION.cff, or explicit GitHub metadata fallbacks. Built for academic software citation workflows." />
-  <meta name="keywords" content="GitHub citation generator, BibTeX for GitHub repository, CITATION.cff to BibTeX, software citation, cite GitHub repository, academic BibTeX" />
+  <title>GitHub Citation | Generate BibTeX, APA, MLA, Chicago, IEEE, Harvard</title>
+  <meta name="description" content="Generate BibTeX, APA, MLA, Chicago, IEEE, and Harvard citations for public GitHub repositories using CITATION.bib, CITATION.cff, or GitHub metadata fallbacks." />
+  <meta name="keywords" content="GitHub citation generator, BibTeX for GitHub repository, APA citation, MLA citation, Chicago citation, IEEE citation, Harvard citation, software citation" />
   <meta name="author" content="Ezequiel Santos" />
   <link rel="canonical" href="https://ezefranca.github.io/github-citation/" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="GitHub Citation" />
-  <meta property="og:description" content="Generate BibTeX for GitHub repositories with clear provenance from CITATION.bib, CITATION.cff, or GitHub metadata." />
+  <meta property="og:description" content="Generate BibTeX, APA, MLA, Chicago, IEEE, and Harvard citations for GitHub repositories with clear provenance." />
   <meta property="og:url" content="https://ezefranca.github.io/github-citation/" />
   <meta property="og:image" content="https://ezefranca.github.io/github-citation/img/app.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="GitHub Citation" />
-  <meta name="twitter:description" content="Generate reviewable BibTeX for public GitHub repositories and software citation workflows." />
+  <meta name="twitter:description" content="Generate BibTeX, APA, MLA, Chicago, IEEE, and Harvard citations for public GitHub repositories." />
   <meta name="twitter:image" content="https://ezefranca.github.io/github-citation/img/app.png" />
   <link rel="icon" href="https://github.githubassets.com/favicons/favicon.png" />
   <script>
@@ -44,7 +44,7 @@
       "applicationCategory": "EducationalApplication",
       "operatingSystem": "Web",
       "url": "https://ezefranca.github.io/github-citation/",
-      "description": "Generate BibTeX citations for GitHub repositories using CITATION.bib, CITATION.cff, or GitHub metadata.",
+      "description": "Generate BibTeX, APA, MLA, Chicago, IEEE, and Harvard citations for GitHub repositories using CITATION.bib, CITATION.cff, or GitHub metadata.",
       "author": {
         "@type": "Person",
         "name": "Ezequiel Santos",
@@ -64,10 +64,10 @@
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "How do I cite a GitHub repository in BibTeX?",
+          "name": "How do I cite a GitHub repository?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Paste the public GitHub repository URL into GitHub Citation. The tool prefers CITATION.bib, converts CITATION.cff to BibTeX when needed, and otherwise drafts a BibTeX @misc entry from GitHub metadata."
+            "text": "Paste the public GitHub repository URL into GitHub Citation. The tool prefers CITATION.bib, converts CITATION.cff to BibTeX when needed, and otherwise drafts a BibTeX @misc entry from GitHub metadata. Then choose APA, MLA, Chicago, IEEE, Harvard, or BibTeX from the citation style tabs."
           }
         },
         {
@@ -80,10 +80,10 @@
         },
         {
           "@type": "Question",
-          "name": "Does this support CITATION.cff to BibTeX conversion?",
+          "name": "Does this support multiple citation styles?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes. The app parses CITATION.cff and maps citation metadata such as authors, title, DOI, version, year, and URL into a BibTeX entry."
+            "text": "Yes. The app parses CITATION.cff and maps citation metadata such as authors, title, DOI, version, year, and URL into BibTeX, APA, MLA, Chicago, IEEE, and Harvard formats."
           }
         }
       ]
@@ -99,7 +99,7 @@
           <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo" class="logo">
           GitHub Citation
         </h1>
-        <p class="lede">Paste a GitHub repo URL or <code>owner/repo</code> and generate BibTeX.</p>
+        <p class="lede">Paste a GitHub repo URL or <code>owner/repo</code> and generate BibTeX, APA, MLA, Chicago, IEEE, or Harvard citations.</p>
       </div>
       <div class="topbar-actions">
         <button id="themeToggle" type="button" class="theme-toggle" aria-label="Toggle light and dark mode">
@@ -140,7 +140,7 @@
         <label for="repoUrl">GitHub repository</label>
         <div class="input-row">
           <input type="text" id="repoUrl" placeholder="owner/repo or https://github.com/owner/repo" />
-          <button id="generateButton" type="submit">Generate BibTeX</button>
+          <button id="generateButton" type="submit">Generate citation</button>
         </div>
         <p class="input-hint">Supports full URLs, <code>github.com/owner/repo</code>, <code>owner/repo</code>, and <code>.git</code> URLs.</p>
       </form>
@@ -148,8 +148,16 @@
       <p id="outputMeta" class="output-meta">Ready for a repository URL.</p>
 
       <section class="output-panel">
+        <div class="citation-tabs" role="tablist" aria-label="Citation style">
+          <button type="button" class="tab-button is-active" role="tab" aria-selected="true" tabindex="0" data-citation-style="bibtex">BibTeX</button>
+          <button type="button" class="tab-button" role="tab" aria-selected="false" tabindex="-1" data-citation-style="apa">APA</button>
+          <button type="button" class="tab-button" role="tab" aria-selected="false" tabindex="-1" data-citation-style="mla">MLA</button>
+          <button type="button" class="tab-button" role="tab" aria-selected="false" tabindex="-1" data-citation-style="chicago">Chicago</button>
+          <button type="button" class="tab-button" role="tab" aria-selected="false" tabindex="-1" data-citation-style="ieee">IEEE</button>
+          <button type="button" class="tab-button" role="tab" aria-selected="false" tabindex="-1" data-citation-style="harvard">Harvard</button>
+        </div>
         <div class="output-container">
-          <pre><code id="output" class="language-bibtex bibtex-output" aria-live="polite">BibTeX citation will appear here...</code></pre>
+          <pre><code id="output" class="citation-output bibtex-output" aria-live="polite">Citation will appear here...</code></pre>
         </div>
       </section>
 
@@ -166,6 +174,21 @@
         </div>
       </div>
     </main>
+
+    <section class="card info-card">
+      <p class="eyebrow">Citation basics</p>
+      <h2>What is a citation?</h2>
+      <p>A citation is a way of giving credit to individuals for their creative and intellectual works that you utilized to support your research. It can also be used to locate particular sources and combat plagiarism. Typically, a citation can include the author's name, date, location of the publishing company, journal title, or DOI (Digital Object Identifier).</p>
+      <h3>What is a citation style?</h3>
+      <p>A citation style dictates the information necessary for a citation and how the information is ordered, as well as punctuation and other formatting.</p>
+      <ul class="style-list">
+        <li><strong>APA (American Psychological Association):</strong> Used in the social sciences (e.g., psychology, education, business). It emphasizes the publication date to show the chronology of research.</li>
+        <li><strong>MLA (Modern Language Association):</strong> Used in the humanities (e.g., literature, language, cultural studies). It emphasizes page numbers so readers can easily locate exact quotes.</li>
+        <li><strong>Chicago Manual of Style:</strong> Commonly used in history and the arts. It is highly flexible and offers two formats: Notes and Bibliography (using footnotes/endnotes) or Author-Date.</li>
+        <li><strong>IEEE:</strong> Used in engineering, computer science, and information technology. It uses bracketed numbers in the text (e.g., [1]) tied to a numbered reference list.</li>
+        <li><strong>Harvard:</strong> A widely used author-date system, very similar to APA, that is heavily utilized in the UK and Australia.</li>
+      </ul>
+    </section>
 
     <footer class="footer">
       <p>Uses repository citation files first and falls back to GitHub metadata when needed.</p>
