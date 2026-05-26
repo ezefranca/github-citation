@@ -36,7 +36,7 @@ const LABELS = {
   generating: 'Generating...'
 };
 
-const UNKNOWN_AUTHOR = 'Unknown';
+const UNKNOWN_AUTHOR = 'Anonymous';
 
 const CONFIG = {
   projectApiUrl: 'https://api.github.com/repos/ezefranca/github-citation',
@@ -566,7 +566,10 @@ function findTopLevelComma(text) {
     if (char === '{') {
       depth += 1;
     } else if (char === '}') {
-      depth = Math.max(0, depth - 1);
+      depth -= 1;
+      if (depth < 0) {
+        return -1;
+      }
     } else if (char === ',' && depth === 0) {
       return index;
     }
@@ -927,7 +930,8 @@ function formatInitials(firstName) {
 
 function formatAccessDate(dateValue) {
   const date = new Date(dateValue);
-  if (Number.isNaN(date.getTime())) {
+  const timeValue = date.getTime();
+  if (!Number.isFinite(timeValue)) {
     return dateValue;
   }
 
@@ -963,12 +967,16 @@ function setOutputMeta(message) {
 
 function renderBibtex(bibtex) {
   elements.output.innerHTML = highlightBibtex(bibtex);
-  elements.output.classList.add('bibtex-output');
+  setOutputMode(true);
 }
 
 function renderPlainCitation(text) {
   elements.output.textContent = text;
-  elements.output.classList.remove('bibtex-output');
+  setOutputMode(false);
+}
+
+function setOutputMode(isBibtex) {
+  elements.output.classList.toggle('bibtex-output', isBibtex);
 }
 
 function renderCitationOutput() {
