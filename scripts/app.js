@@ -401,8 +401,12 @@ function findIdentifierValue(identifiers, type) {
 
 function formatNameToBibtex(name) {
   const nameParts = String(name).trim().split(/\s+/).filter(Boolean);
-  if (nameParts.length <= 1) {
-    return nameParts[0] || UNKNOWN_AUTHOR;
+  if (nameParts.length === 0) {
+    return UNKNOWN_AUTHOR;
+  }
+
+  if (nameParts.length === 1) {
+    return nameParts[0];
   }
 
   const [firstName, ...lastName] = nameParts;
@@ -923,7 +927,7 @@ function formatInitials(firstName) {
 
 function formatAccessDate(dateValue) {
   const date = new Date(dateValue);
-  if (isNaN(date.getTime())) {
+  if (Number.isNaN(date.getTime())) {
     return dateValue;
   }
 
