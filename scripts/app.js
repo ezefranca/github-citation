@@ -378,7 +378,7 @@ function normalizeCffAuthors(authors, fallbackOwner) {
         return author.name;
       }
 
-      return [author.given_names, author.family_names].filter(Boolean).join(' ');
+      return [author.family_names, author.given_names].filter(Boolean).join(', ');
     })
     .filter(Boolean);
 }
@@ -565,14 +565,109 @@ function findTopLevelComma(text) {
 
 function parseBibtexFields(text) {
   const fields = {};
-  const fieldRegex = /([A-Za-z][A-Za-z0-9_-]*)\s*=\s*({[^{}]*}|"[^"]*"|[^,\n]+)\s*,?/g;
-  let match;
+  let index = 0;
 
-  while ((match = fieldRegex.exec(text)) !== null) {
-    fields[match[1].toLowerCase()] = normalizeBibtexValue(match[2]);
+  while (index < text.length) {
+    index = skipBibtexSeparators(text, index);
+    const nameMatch = text.slice(index).match(/^([A-Za-z][A-Za-z0-9_-]*)/);
+    if (!nameMatch) {
+      break;
+    }
+
+    const name = nameMatch[1];
+    index += name.length;
+    index = skipBibtexWhitespace(text, index);
+
+    if (text[index] !== '=') {
+      break;
+    }
+
+    index += 1;
+    index = skipBibtexWhitespace(text, index);
+
+    const { value, nextIndex } = readBibtexValue(text, index);
+    fields[name.toLowerCase()] = normalizeBibtexValue(value);
+    index = nextIndex;
   }
 
   return fields;
+}
+
+function readBibtexValue(text, index) {
+  const char = text[index];
+  if (char === '{') {
+    let depth = 0;
+    let cursor = index;
+
+    while (cursor < text.length) {
+      const current = text[cursor];
+      if (current === '{') {
+        depth += 1;
+      } else if (current === '}') {
+        depth -= 1;
+      }
+
+      cursor += 1;
+      if (depth === 0) {
+        break;
+      }
+    }
+
+    const value = text.slice(index, cursor);
+    return { value, nextIndex: advanceToNextField(text, cursor) };
+  }
+
+  if (char === '"') {
+    let cursor = index + 1;
+    let escaped = false;
+
+    while (cursor < text.length) {
+      const current = text[cursor];
+      if (!escaped && current === '"') {
+        cursor += 1;
+        break;
+      }
+
+      escaped = current === '\\' && !escaped;
+      cursor += 1;
+    }
+
+    const value = text.slice(index, cursor);
+    return { value, nextIndex: advanceToNextField(text, cursor) };
+  }
+
+  let cursor = index;
+  while (cursor < text.length && text[cursor] !== ',') {
+    cursor += 1;
+  }
+
+  const value = text.slice(index, cursor).trim();
+  return { value, nextIndex: advanceToNextField(text, cursor) };
+}
+
+function advanceToNextField(text, index) {
+  let cursor = index;
+  while (cursor < text.length && text[cursor] !== ',') {
+    cursor += 1;
+  }
+
+  return cursor < text.length ? cursor + 1 : cursor;
+}
+
+function skipBibtexWhitespace(text, index) {
+  let cursor = index;
+  while (cursor < text.length && /\s/.test(text[cursor])) {
+    cursor += 1;
+  }
+  return cursor;
+}
+
+function skipBibtexSeparators(text, index) {
+  let cursor = index;
+  while (cursor < text.length && /[\s,]/.test(text[cursor])) {
+    cursor += 1;
+  }
+  return cursor;
 }
 
 function normalizeBibtexValue(value) {
@@ -650,7 +745,7 @@ function formatIeeeCitation(data) {
 
   return [
     authorBlock,
-    `"${data.title},"`,
+    `"${data.title}",`,
     data.publisher ? `${data.publisher},` : '',
     `${year}.`,
     '[Online].',
@@ -687,7 +782,7 @@ function formatHarvardCitation(data) {
 
 function formatApaAuthors(authors) {
   const formatted = authors.map((author) => formatAuthorLastInitials(author)).filter(Boolean);
-  return joinAuthorList(formatted, ' & ');
+  return joinAuthorList(formatted, '&');
 }
 
 function formatMlaAuthors(authors) {
@@ -713,7 +808,7 @@ function formatChicagoAuthors(authors) {
   }
 
   const formatted = authors.map((author) => formatAuthorLastFirst(author)).filter(Boolean);
-  return `${joinAuthorList(formatted, ' and ')}.`;
+  return `${joinAuthorList(formatted, 'and')}.`;
 }
 
 function formatIeeeAuthors(authors) {
@@ -722,12 +817,12 @@ function formatIeeeAuthors(authors) {
   }
 
   const formatted = authors.map((author) => formatAuthorInitialsLast(author)).filter(Boolean);
-  return joinAuthorList(formatted, ' and ');
+  return joinAuthorList(formatted, 'and');
 }
 
 function formatHarvardAuthors(authors) {
   const formatted = authors.map((author) => formatAuthorLastInitials(author)).filter(Boolean);
-  return joinAuthorList(formatted, ' and ');
+  return joinAuthorList(formatted, 'and');
 }
 
 function joinAuthorList(authors, conjunction) {
@@ -735,15 +830,17 @@ function joinAuthorList(authors, conjunction) {
     return '';
   }
 
+  const normalizedConjunction = conjunction.trim();
+
   if (authors.length === 1) {
     return authors[0];
   }
 
   if (authors.length === 2) {
-    return `${authors[0]}${conjunction}${authors[1]}`;
+    return `${authors[0]} ${normalizedConjunction} ${authors[1]}`;
   }
 
-  return `${authors.slice(0, -1).join(', ')},${conjunction}${authors[authors.length - 1]}`;
+  return `${authors.slice(0, -1).join(', ')}, ${normalizedConjunction} ${authors[authors.length - 1]}`;
 }
 
 function formatAuthorLastInitials(author) {
@@ -818,7 +915,7 @@ function formatInitials(firstName) {
 
 function formatAccessDate(dateValue) {
   const date = new Date(dateValue);
-  if (Number.isNaN(date.getTime())) {
+  if (isNaN(date.getTime())) {
     return dateValue;
   }
 
