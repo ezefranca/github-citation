@@ -31,6 +31,13 @@ const CITATION_STYLES = [
   { id: 'harvard', label: 'Harvard' }
 ];
 
+const LABELS = {
+  generate: 'Generate citation',
+  generating: 'Generating...'
+};
+
+const UNKNOWN_AUTHOR = 'Unknown';
+
 const CONFIG = {
   projectApiUrl: 'https://api.github.com/repos/ezefranca/github-citation',
   historyStorageKey: 'github-citation-history-v1',
@@ -365,7 +372,7 @@ async function buildCitationDataFromBibtex(bibtex, repository) {
 
 function normalizeCffAuthors(authors, fallbackOwner) {
   if (!Array.isArray(authors) || authors.length === 0) {
-    return [fallbackOwner];
+    return [fallbackOwner || UNKNOWN_AUTHOR];
   }
 
   return authors
@@ -394,7 +401,7 @@ function findIdentifierValue(identifiers, type) {
 function formatNameToBibtex(name) {
   const nameParts = String(name).trim().split(/\s+/).filter(Boolean);
   if (nameParts.length <= 1) {
-    return nameParts[0] || 'Unknown';
+    return nameParts[0] || UNKNOWN_AUTHOR;
   }
 
   const [firstName, ...lastName] = nameParts;
@@ -403,7 +410,7 @@ function formatNameToBibtex(name) {
 
 function formatAuthorsForBibtex(authors) {
   if (!Array.isArray(authors) || authors.length === 0) {
-    return formatNameToBibtex('Unknown');
+    return formatNameToBibtex(UNKNOWN_AUTHOR);
   }
 
   return authors
@@ -446,7 +453,7 @@ function normalizeCitationData(citationData) {
   const normalized = { ...citationData };
   const authors = Array.isArray(normalized.authors) ? normalized.authors.filter(Boolean) : [];
 
-  normalized.authors = authors.length > 0 ? authors : ['Unknown'];
+  normalized.authors = authors.length > 0 ? authors : [UNKNOWN_AUTHOR];
   normalized.title = normalized.title || normalized.repository || normalized.repoUrl || 'Untitled';
   normalized.year = normalized.year || 'n.d.';
   normalized.url = normalized.url || normalized.repoUrl || '';
@@ -787,7 +794,7 @@ function formatApaAuthors(authors) {
 
 function formatMlaAuthors(authors) {
   if (authors.length === 0) {
-    return 'Unknown.';
+    return `${UNKNOWN_AUTHOR}.`;
   }
 
   const first = formatAuthorLastFirst(authors[0]);
@@ -804,7 +811,7 @@ function formatMlaAuthors(authors) {
 
 function formatChicagoAuthors(authors) {
   if (authors.length === 0) {
-    return 'Unknown.';
+    return `${UNKNOWN_AUTHOR}.`;
   }
 
   const formatted = authors.map((author) => formatAuthorLastFirst(author)).filter(Boolean);
@@ -813,7 +820,7 @@ function formatChicagoAuthors(authors) {
 
 function formatIeeeAuthors(authors) {
   if (authors.length === 0) {
-    return 'Unknown';
+    return UNKNOWN_AUTHOR;
   }
 
   const formatted = authors.map((author) => formatAuthorInitialsLast(author)).filter(Boolean);
@@ -1108,7 +1115,7 @@ function getCopyLabel() {
 
 function setBusyState(isBusy) {
   elements.generateButton.disabled = isBusy;
-  elements.generateButton.textContent = isBusy ? 'Generating...' : 'Generate citation';
+  elements.generateButton.textContent = isBusy ? LABELS.generating : LABELS.generate;
   elements.copyButton.disabled = isBusy || !getCurrentCitationText();
 }
 
