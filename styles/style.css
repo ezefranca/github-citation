@@ -430,6 +430,13 @@ pre {
   font-size: 1.15rem;
 }
 
+.modal-panel h3 {
+  font-family: 'Computer Modern Sans', 'Latin Modern Sans', sans-serif;
+  font-weight: 400;
+  margin: 0.65rem 0 0.35rem;
+  font-size: 1.15rem;
+}
+
 .style-list {
   list-style: none;
   margin: 0.85rem 0 0;

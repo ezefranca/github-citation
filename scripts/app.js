@@ -7,6 +7,7 @@ const elements = {
   copyButton: document.getElementById('copyButton'),
   themeToggle: document.getElementById('themeToggle'),
   themeToggleLabel: document.getElementById('themeToggleLabel'),
+  basicsButton: document.getElementById('basicsButton'),
   explainButton: document.getElementById('explainButton'),
   historyButton: document.getElementById('historyButton'),
   creditsButton: document.getElementById('creditsButton'),
@@ -16,6 +17,7 @@ const elements = {
   historyList: document.getElementById('historyList'),
   clearHistoryButton: document.getElementById('clearHistoryButton'),
   starCount: document.getElementById('starCount'),
+  basicsDialog: document.getElementById('basicsDialog'),
   explainDialog: document.getElementById('explainDialog'),
   historyDialog: document.getElementById('historyDialog'),
   creditsDialog: document.getElementById('creditsDialog'),
@@ -80,6 +82,7 @@ function bindEvents() {
   elements.form.addEventListener('submit', handleCitationSubmit);
   elements.copyButton.addEventListener('click', copyCurrentCitation);
   elements.themeToggle.addEventListener('click', toggleTheme);
+  elements.basicsButton.addEventListener('click', () => openDialog(elements.basicsDialog));
   elements.explainButton.addEventListener('click', () => openDialog(elements.explainDialog));
   elements.historyButton.addEventListener('click', () => openDialog(elements.historyDialog));
   elements.creditsButton.addEventListener('click', () => openDialog(elements.creditsDialog));
@@ -95,7 +98,7 @@ function bindEvents() {
     });
   });
 
-  [elements.explainDialog, elements.historyDialog, elements.creditsDialog].forEach((dialog) => {
+  [elements.basicsDialog, elements.explainDialog, elements.historyDialog, elements.creditsDialog].forEach((dialog) => {
     dialog.addEventListener('click', closeDialogOnBackdrop);
   });
 }
