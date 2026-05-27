@@ -415,20 +415,18 @@ pre {
   padding: 1.1rem;
 }
 
-.info-card h2,
-.info-card h3,
-.modal-panel h3 {
+.info-card h2 {
   font-family: 'Computer Modern Sans', 'Latin Modern Sans', sans-serif;
   font-weight: 400;
   margin: 0.65rem 0 0.35rem;
-}
-
-.info-card h2 {
   font-size: 1.4rem;
 }
 
 .info-card h3,
 .modal-panel h3 {
+  font-family: 'Computer Modern Sans', 'Latin Modern Sans', sans-serif;
+  font-weight: 400;
+  margin: 0.65rem 0 0.35rem;
   font-size: 1.15rem;
 }
 
