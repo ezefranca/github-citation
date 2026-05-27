@@ -168,27 +168,13 @@
           <strong id="citationSource" class="source-pill" data-tone="neutral">Awaiting input</strong>
         </div>
         <div class="toolbar-actions">
+          <button id="basicsButton" type="button" class="ghost-button">Citation basics</button>
           <button id="explainButton" type="button" class="ghost-button">How generated</button>
           <button id="historyButton" type="button" class="ghost-button">History</button>
           <button id="creditsButton" type="button" class="ghost-button">Credits</button>
         </div>
       </div>
     </main>
-
-    <section class="card info-card">
-      <p class="eyebrow">Citation basics</p>
-      <h2>What is a citation?</h2>
-      <p>A citation is a way of giving credit to individuals for their creative and intellectual works that you utilized to support your research. It can also be used to locate particular sources and combat plagiarism. Typically, a citation can include the author's name, date, location of the publishing company, journal title, or DOI (Digital Object Identifier).</p>
-      <h3>What is a citation style?</h3>
-      <p>A citation style dictates the information necessary for a citation and how the information is ordered, as well as punctuation and other formatting.</p>
-      <ul class="style-list">
-        <li><strong>APA (American Psychological Association):</strong> Used in the social sciences (e.g., psychology, education, business). It emphasizes the publication date to show the chronology of research.</li>
-        <li><strong>MLA (Modern Language Association):</strong> Used in the humanities (e.g., literature, language, cultural studies). It emphasizes page numbers so readers can easily locate exact quotes.</li>
-        <li><strong>Chicago Manual of Style:</strong> Commonly used in history and the arts. It is highly flexible and offers two formats: Notes and Bibliography (using footnotes/endnotes) or Author-Date.</li>
-        <li><strong>IEEE:</strong> Used in engineering, computer science, and information technology. It uses bracketed numbers in the text (e.g., [1]) tied to a numbered reference list.</li>
-        <li><strong>Harvard:</strong> A widely used author-date system, very similar to APA, that is commonly used in the UK and Australia.</li>
-      </ul>
-    </section>
 
     <footer class="footer">
       <p>Uses repository citation files first and falls back to GitHub metadata when needed.</p>
@@ -210,6 +196,28 @@
         <li>Convert <code>CITATION.cff</code> into BibTeX when a citation file exists but is not already in BibTeX format.</li>
         <li>If neither file exists, generate a reviewable <code>@misc</code> entry from GitHub repository metadata.</li>
       </ol>
+    </div>
+  </dialog>
+
+  <dialog id="basicsDialog" class="modal">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Citation basics</p>
+          <h2>What is a citation?</h2>
+        </div>
+        <button type="button" class="ghost-button" data-close-dialog="basicsDialog">Close</button>
+      </div>
+      <p>A citation is a way of giving credit to individuals for their creative and intellectual works that you utilized to support your research. It can also be used to locate particular sources and combat plagiarism. Typically, a citation can include the author's name, date, location of the publishing company, journal title, or DOI (Digital Object Identifier).</p>
+      <h3>What is a citation style?</h3>
+      <p>A citation style dictates the information necessary for a citation and how the information is ordered, as well as punctuation and other formatting.</p>
+      <ul class="style-list">
+        <li><strong>APA (American Psychological Association):</strong> Used in the social sciences (e.g., psychology, education, business). It emphasizes the publication date to show the chronology of research.</li>
+        <li><strong>MLA (Modern Language Association):</strong> Used in the humanities (e.g., literature, language, cultural studies). It emphasizes page numbers so readers can easily locate exact quotes.</li>
+        <li><strong>Chicago Manual of Style:</strong> Commonly used in history and the arts. It is highly flexible and offers two formats: Notes and Bibliography (using footnotes/endnotes) or Author-Date.</li>
+        <li><strong>IEEE:</strong> Used in engineering, computer science, and information technology. It uses bracketed numbers in the text (e.g., [1]) tied to a numbered reference list.</li>
+        <li><strong>Harvard:</strong> A widely used author-date system, very similar to APA, that is commonly used in the UK and Australia.</li>
+      </ul>
     </div>
   </dialog>
 
