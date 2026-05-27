@@ -1,0 +1,6 @@
+interface:
+  display_name: "GitHub Citation"
+  short_description: "Cite GitHub repos in common styles"
+  default_prompt: "Use $github-citation to generate a BibTeX citation for a GitHub repository."
+policy:
+  allow_implicit_invocation: true

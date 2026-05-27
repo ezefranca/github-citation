@@ -1,0 +1,46 @@
+{
+  "name": "github-citation",
+  "version": "0.1.0",
+  "description": "Generate BibTeX, APA, MLA, Chicago, IEEE, and Harvard citations from GitHub repositories.",
+  "type": "module",
+  "main": "./src/citation-core.js",
+  "exports": {
+    ".": "./src/citation-core.js"
+  },
+  "files": [
+    "app.png",
+    "bin/",
+    "index.html",
+    "scripts/",
+    "skills/",
+    "src/",
+    "styles/"
+  ],
+  "bin": {
+    "github-citation": "./bin/github-citation.js",
+    "github-citation-mcp": "./bin/github-citation-mcp.js"
+  },
+  "scripts": {
+    "test": "node --test",
+    "citation": "node ./bin/github-citation.js",
+    "mcp": "node ./bin/github-citation-mcp.js"
+  },
+  "keywords": [
+    "github",
+    "citation",
+    "bibtex",
+    "cff",
+    "mcp",
+    "cli"
+  ],
+  "author": "Ezequiel Santos",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "js-yaml": "^4.1.1",
+    "zod": "^4.1.12"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
