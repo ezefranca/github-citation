@@ -23,6 +23,22 @@ Use `GITHUB_TOKEN` or `GH_TOKEN` in the environment for private repositories or 
 
 ## Installation
 
+Install the agent skill with the `skills` CLI:
+
+```bash
+npx skills add https://github.com/ezefranca/github-citation --skill github-citation
+```
+
+Install globally for Codex:
+
+```bash
+npx skills add https://github.com/ezefranca/github-citation \
+  --skill github-citation \
+  -a codex \
+  -g \
+  -y
+```
+
 First check whether the tools already exist:
 
 ```bash
@@ -60,6 +76,13 @@ For one-off use without a global install, use `npx`:
 ```bash
 npx -y --package github-citation github-citation owner/repo
 npx -y --package github-citation github-citation-mcp
+```
+
+If the npm package is not yet available in the current registry, use the GitHub source:
+
+```bash
+npm exec --yes --package=github:ezefranca/github-citation -- github-citation owner/repo
+npm exec --yes --package=github:ezefranca/github-citation -- github-citation-mcp
 ```
 
 Use Node.js 20 or newer. If installation fails, check `node --version` and `npm --version` before changing package code.
@@ -135,6 +158,25 @@ Without installing globally:
     "github-citation": {
       "command": "npx",
       "args": ["-y", "--package", "github-citation", "github-citation-mcp"]
+    }
+  }
+}
+```
+
+Without installing globally, using the GitHub source:
+
+```json
+{
+  "mcpServers": {
+    "github-citation": {
+      "command": "npm",
+      "args": [
+        "exec",
+        "--yes",
+        "--package=github:ezefranca/github-citation",
+        "--",
+        "github-citation-mcp"
+      ]
     }
   }
 }

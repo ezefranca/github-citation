@@ -1,5 +1,7 @@
 # GitHub Citation Generator
 
+[![skills.sh](https://img.shields.io/badge/skills.sh-github--citation-111827.svg)](https://github.com/ezefranca/github-citation/tree/main/skills/github-citation)
+
 ![](/app.png)
 
 A web, CLI, MCP, and agent-skill tool to generate BibTeX, APA, MLA, Chicago, IEEE, and Harvard citations from any GitHub repository. It supports repositories with `CITATION.bib` or `CITATION.cff` files and falls back to GitHub metadata when citation files are unavailable.
@@ -72,6 +74,21 @@ When installed as a package, the command can be:
 }
 ```
 
+Without a global install and before npm publication, use the GitHub source:
+
+```json
+{
+  "command": "npm",
+  "args": [
+    "exec",
+    "--yes",
+    "--package=github:ezefranca/github-citation",
+    "--",
+    "github-citation-mcp"
+  ]
+}
+```
+
 The MCP tool is `generate_github_citation`.
 
 ## Agent Skill
@@ -90,7 +107,23 @@ The bundled skill teaches agents how to install and use the CLI/MCP server, call
 
 ### Install In Codex
 
-From Codex, install the skill from this repository with `$skill-installer`:
+Install with the `skills` CLI:
+
+```bash
+npx skills add https://github.com/ezefranca/github-citation --skill github-citation
+```
+
+Install globally for Codex:
+
+```bash
+npx skills add https://github.com/ezefranca/github-citation \
+  --skill github-citation \
+  -a codex \
+  -g \
+  -y
+```
+
+From Codex, you can also install the skill from this repository with `$skill-installer`:
 
 ```text
 $skill-installer install https://github.com/ezefranca/github-citation/tree/main/skills/github-citation
